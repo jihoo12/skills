@@ -104,10 +104,27 @@ packages = with pkgs; [ go gopls golangci-lint ];
 ## C / C++
 
 ```nix
-packages = with pkgs; [ cmake ninja pkg-config gdb clang-tools ];
+packages = with pkgs; [ cmake ninja pkg-config clang-tools ]   # or: meson ninja pkg-config clang-tools
+  ++ lib.optionals stdenv.isLinux [ gdb ]
+  ++ lib.optionals stdenv.isDarwin [ lldb ];
 buildInputs = with pkgs; [ openssl zlib ];   # libraries to link against
 ```
 
+- Pick the build system this way:
+  - An existing project: keep the build system it already has, and add the
+    matching tools. `CMakeLists.txt` -> `cmake ninja`; `meson.build` ->
+    `meson ninja`; `configure.ac` / `Makefile.am` -> `autoconf automake
+    libtool`; a plain `Makefile` -> nothing extra (`gnumake` is in `mkShell`).
+    Do not migrate a project to another build system unless the user asks.
+  - A new project: use CMake with the Ninja generator (`cmake -G Ninja`)
+    unless the user prefers something else. Most libraries ship CMake package
+    configs, and editor and `clangd` support is the most widely documented.
+    Meson is a good choice too when the user asks for it.
+- Both CMake and Meson find libraries in `buildInputs` through `pkg-config`
+  (and CMake also through `find_package`), so the Nix side is the same for
+  either. Generate `compile_commands.json` for `clangd`
+  (`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` for CMake; Meson writes it to the
+  build directory by default).
 - `mkShell` already includes a C/C++ compiler (gcc on Linux, clang on macOS).
   Use `pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }` to switch.
 - Put build tools in `packages` and link-time libraries in `buildInputs`; the
@@ -115,6 +132,8 @@ buildInputs = with pkgs; [ openssl zlib ];   # libraries to link against
   automatically.
 - `clang-tools` must come from the same LLVM as the compiler for `clangd` to
   find standard headers.
+- Debugger: `gdb` on Linux, `lldb` on macOS. gdb cannot debug native
+  processes on Apple Silicon, so guard it with `lib.optionals` as above.
 
 ## JVM (Java, Kotlin, Scala)
 
