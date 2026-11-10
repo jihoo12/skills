@@ -56,7 +56,7 @@ server, a watcher) has to be restarted to see new tools.
 nix search nixpkgs ripgrep            # search by name/description
 nix eval nixpkgs#nodejs_24.version    # confirm an attribute exists and its version
 ```
-Prefer version-pinned attributes (`nodejs_24`, `python312`, `jdk21`,
+Prefer version-pinned attributes (`nodejs_24`, `python314`, `jdk21`,
 `postgresql_16`) over floating ones (`nodejs`, `python3`) so that a lock update
 does not silently change a major version. Old pinned attributes are removed
 from nixpkgs once the upstream version reaches end-of-life, so check that the

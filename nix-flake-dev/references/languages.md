@@ -46,15 +46,23 @@ packages = with pkgs; [ nodejs_24 pnpm ];   # or yarn-berry, bun, deno
 ## Python
 
 ```nix
-packages = with pkgs; [ python312 uv ];
+packages = with pkgs; [ python314 uv ];
 ```
 
+- Pick the Python version this way:
+  - An existing project: use the `python3<minor>` attribute that matches
+    `requires-python` in `pyproject.toml` / `.python-version`.
+  - A new project: use `python314`. Versions in security-fix-only mode
+    (`python312` and older) are not for new work. A just-released version
+    (`python315` at the moment) is fine once the dependencies ship wheels for
+    it. Check what exists before writing it down:
+    `nix eval nixpkgs#python314.version`.
 - Let `uv` (or poetry/pdm) own the virtualenv and `pyproject.toml` + lockfile;
   Nix supplies the interpreter and the system libraries. Tell uv to use the Nix
   interpreter instead of downloading its own:
   ```nix
   env.UV_PYTHON_DOWNLOADS = "never";
-  env.UV_PYTHON = "${pkgs.python312}/bin/python";
+  env.UV_PYTHON = "${pkgs.python314}/bin/python";
   ```
 - Never `pip install` outside a virtualenv; the Nix store is read-only and it
   will fail or land in `~/.local`.
@@ -66,7 +74,7 @@ packages = with pkgs; [ python312 uv ];
   ```
   On non-NixOS Linux and on macOS this is usually unnecessary.
 - For small scripts with few dependencies, a Nix-built interpreter is simpler:
-  `(python312.withPackages (ps: with ps; [ requests pyyaml ]))`.
+  `(python314.withPackages (ps: with ps; [ requests pyyaml ]))`.
 
 ## Rust
 
