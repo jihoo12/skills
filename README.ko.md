@@ -2,7 +2,7 @@
 
 [English](./README.md) | 한국어
 
-AI 코딩 에이전트(Claude Code 등)를 위한 스킬 모음입니다.
+AI 코딩 에이전트(Claude Code, Codex, OpenCode 등)를 위한 스킬 모음입니다.
 
 ## 스킬 목록
 
@@ -12,11 +12,19 @@ AI 코딩 에이전트(Claude Code 등)를 위한 스킬 모음입니다.
 
 ## 설치
 
+먼저 이 저장소를 클론합니다.
+
+```bash
+git clone https://github.com/jihoo12/skills.git ~/src/skills
+```
+
+각 스킬은 `SKILL.md`가 들어 있는 폴더입니다. 사용하는 에이전트의 스킬 디렉터리에 링크하거나 복사하면 됩니다.
+
+### Claude Code
+
 Claude Code는 `~/.claude/skills/`(모든 프로젝트) 또는 프로젝트의 `.claude/skills/`(해당 프로젝트만)에 있는 스킬을 읽습니다.
 
 ```bash
-git clone <이 저장소 URL> ~/src/skills
-
 # 모든 프로젝트에 적용
 mkdir -p ~/.claude/skills
 ln -s ~/src/skills/nix-flake-dev ~/.claude/skills/nix-flake-dev
@@ -25,6 +33,38 @@ ln -s ~/src/skills/nix-flake-dev ~/.claude/skills/nix-flake-dev
 mkdir -p .claude/skills
 cp -r ~/src/skills/nix-flake-dev .claude/skills/
 ```
+
+### Codex
+
+Codex는 `~/.agents/skills/`(모든 프로젝트) 또는 저장소의 `.agents/skills/`(현재 디렉터리부터 저장소 루트까지 탐색)에 있는 스킬을 읽습니다. 심볼릭 링크로 연결한 스킬 폴더도 지원합니다.
+
+```bash
+# 모든 프로젝트에 적용
+mkdir -p ~/.agents/skills
+ln -s ~/src/skills/nix-flake-dev ~/.agents/skills/nix-flake-dev
+
+# 또는 특정 프로젝트에만 적용
+mkdir -p .agents/skills
+cp -r ~/src/skills/nix-flake-dev .agents/skills/
+```
+
+Codex는 스킬 변경을 자동으로 감지합니다. 스킬이 보이지 않으면 Codex를 다시 시작하세요.
+
+### OpenCode
+
+OpenCode는 `~/.config/opencode/skills/`(모든 프로젝트) 또는 프로젝트의 `.opencode/skills/`(해당 프로젝트만)에 있는 스킬을 읽습니다.
+
+```bash
+# 모든 프로젝트에 적용
+mkdir -p ~/.config/opencode/skills
+ln -s ~/src/skills/nix-flake-dev ~/.config/opencode/skills/nix-flake-dev
+
+# 또는 특정 프로젝트에만 적용
+mkdir -p .opencode/skills
+cp -r ~/src/skills/nix-flake-dev .opencode/skills/
+```
+
+OpenCode는 `.claude/skills/`와 `.agents/skills/`도(전역, 프로젝트 모두) 읽으므로, Claude Code나 Codex용으로 설치한 스킬을 따로 설치하지 않고 OpenCode에서도 쓸 수 있습니다.
 
 ## nix-flake-dev
 
