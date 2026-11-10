@@ -19,13 +19,22 @@ releases.
 ## Node.js / TypeScript
 
 ```nix
-packages = with pkgs; [ nodejs_22 pnpm ];   # or yarn-berry, bun, deno
+packages = with pkgs; [ nodejs_24 pnpm ];   # or yarn-berry, bun, deno
 ```
 
 - Library dependencies stay in `package.json` and its lockfile. CLIs the project
   uses (`tsc`, `eslint`, `vite`) belong in `devDependencies` and are run with
   `npx`/`pnpm exec`, not installed globally.
-- Use the `nodejs_22`-style attribute matching `engines` / `.nvmrc`. Remove
+- Pick the Node.js major version this way:
+  - An existing project: use the `nodejs_<major>` attribute that matches
+    `engines` / `.nvmrc` / `.node-version`.
+  - A new project: use an LTS line. nixpkgs currently has `nodejs_24` and
+    `nodejs_26`; `nodejs_24` is the safe default for broad library
+    compatibility, and `nodejs_26` is fine when the dependencies support it.
+    Avoid odd-numbered majors (never LTS) and `nodejs_22` or older for new
+    work. Check what exists before writing it down:
+    `nix eval nixpkgs#nodejs_26.version`.
+- Use the `nodejs_<major>` attribute, not the floating `nodejs`. Remove
   `.nvmrc`-based instructions from docs once the flake is the source of truth,
   or keep the two in agreement.
 - npm packages that download prebuilt binaries (Prisma engines, Playwright
